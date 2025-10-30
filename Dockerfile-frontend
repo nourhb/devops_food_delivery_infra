@@ -1,0 +1,7 @@
+FROM node:18
+WORKDIR /app
+COPY ../../Food-Delivery-upstream/frontend/package*.json ./
+RUN npm install
+COPY ../../Food-Delivery-upstream/frontend/ .
+EXPOSE 3000
+CMD ["npm", "start"]

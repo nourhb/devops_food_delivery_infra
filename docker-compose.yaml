@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: ../Food-Delivery-upstream/backend
+      dockerfile: ../../devops_food_delivery_infra/Dockerfile-backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_NAME=food_delivery
+    deploy:
+      replicas: 2
+  frontend:
+    build:
+      context: ../Food-Delivery-upstream/frontend
+      dockerfile: ../../devops_food_delivery_infra/Dockerfile-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    deploy:
+      replicas: 2
+  db:
+    image: mysql:8
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=food_delivery
+    volumes:
+      - data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    deploy:
+      replicas: 1
+volumes:
+  data:
