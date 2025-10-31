@@ -2,39 +2,37 @@ version: '3.8'
 services:
   backend:
     build:
-      context: ../Food-Delivery-upstream/backend
-      dockerfile: ../../devops_food_delivery_infra/Dockerfile-backend
+      context: ./Food-Delivery-upstream/backend
+      dockerfile: ../../Dockerfile-backend
+    image: devops_food_delivery_infra-backend:latest
     ports:
-      - "5000:5000"
+      - "4001:4000"
     depends_on:
       - db
     environment:
-      - DB_HOST=db
-      - DB_USER=root
-      - DB_PASSWORD=root
-      - DB_NAME=food_delivery
+      - PORT=4000
+      - MONGO_URL=mongodb://root:root@db:27017/food_delivery?authSource=admin
     deploy:
       replicas: 2
   frontend:
     build:
-      context: ../Food-Delivery-upstream/frontend
-      dockerfile: ../../devops_food_delivery_infra/Dockerfile-frontend
+      context: ./Food-Delivery-upstream/frontend
+      dockerfile: ../../Dockerfile-frontend
+    image: devops_food_delivery_infra-frontend:latest
     ports:
-      - "3000:3000"
+      - "3002:3000"
     depends_on:
       - backend
     deploy:
       replicas: 2
   db:
-    image: mysql:8
+    image: mongo:6
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=food_delivery
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
     volumes:
-      - data:/var/lib/mysql
-    ports:
-      - "3306:3306"
+      - data:/data/db
     deploy:
       replicas: 1
 volumes:

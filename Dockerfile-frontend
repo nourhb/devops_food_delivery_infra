@@ -1,7 +1,13 @@
-FROM node:18
+FROM node:18 as build
 WORKDIR /app
-COPY ../../Food-Delivery-upstream/frontend/package*.json ./
+COPY package*.json ./
 RUN npm install
-COPY ../../Food-Delivery-upstream/frontend/ .
+COPY . .
+RUN npm run build
+
+FROM node:18-slim
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=build /app /app
 EXPOSE 3000
-CMD ["npm", "start"]
+CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "3000"]

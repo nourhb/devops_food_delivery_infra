@@ -1,7 +1,7 @@
 FROM node:18
 WORKDIR /app
-COPY ../../Food-Delivery-upstream/backend/package*.json ./
-RUN npm install
-COPY ../../Food-Delivery-upstream/backend/ .
-EXPOSE 5000
-CMD ["npm", "start"]
+COPY package*.json ./
+RUN npm install --production
+COPY . .
+EXPOSE 4000
+CMD ["node", "server.js"]
